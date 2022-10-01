@@ -1,0 +1,33 @@
+<iframe
+  [style.transform]="startPageSrv.step === 5 ? 'rotateY(0deg)' : ''"
+  [style.z-index]="startPageSrv.step === 5 ? 1 : 0"
+  class="frame" src="https://koto.fun/"></iframe>
+
+<iframe
+  [style.transform]="startPageSrv.step === 6 ? 'rotateY(0deg)' : ''"
+  [style.z-index]="startPageSrv.step === 6 ? 1 : 0"
+  class="frame" src="https://koto.fun/#/quick-start"></iframe>
+
+<iframe
+  [style.transform]="startPageSrv.step === 7 ? 'rotateY(0deg)' : ''"
+  [style.z-index]="startPageSrv.step === 7 ? 1 : 0"
+  class="frame" src="https://api.koto.fun/"></iframe>
+
+<div
+  [style.transform]="startPageSrv.step === 8 ? 'rotateY(0deg)' : ''"
+  [style.z-index]="startPageSrv.step === 8 ? 1 : 0"
+  class="frame">
+  <mat-toolbar>
+    <img (click)="startPageSrv.step = 0" draggable="false" src="assets/logo.png" id="logo"/>
+    <span>Download</span>
+  </mat-toolbar>
+  <mat-card [style.height]="'calc(100vh - 96px)'">
+    <a target="_blank" href="https://github.com/kotoframework/kotoframework/releases">
+      <button mat-raised-button color="primary">Jump to Release</button>
+    </a>
+  </mat-card>
+</div>
+
+<app-code-generator-page class="frame"
+                         [style.transform]="startPageSrv.step === 9 ? 'rotateY(0deg)' : ''"
+                         [style.z-index]="startPageSrv.step === 9 ? 1 : 0"></app-code-generator-page>

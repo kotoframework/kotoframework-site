@@ -1,0 +1,45 @@
+<div class="left">
+  <mat-toolbar color="primary">
+    <img (click)="startPageSrv.step = 0" draggable="false" src="assets/logo.png" id="logo"/>
+    <span>{{i18n.get("codeGenerator")}}</span>
+    <span class="spacer"></span>
+    <mat-form-field appearance="fill" [style.margin-top]="'15px'" [style.margin-right]="'20px'">
+      <mat-label>{{i18n.get('database')}}</mat-label>
+      <mat-select [(ngModel)]="database" style="margin-left: 20px;font-size: 14px">
+        <mat-option *ngFor="let db of databases" [value]="db">
+          {{db}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-icon-button aria-label="icon-button with heart icon" (click)="generate()">
+      <mat-icon>play_arrow</mat-icon>
+    </button>
+    <button mat-icon-button aria-label="icon-button with share icon">
+      <mat-icon>share</mat-icon>
+    </button>
+    <button mat-icon-button aria-label="icon-button with share icon">
+      <mat-icon>download</mat-icon>
+    </button>
+  </mat-toolbar>
+  <ngx-monaco-editor class="editor" (init)="editorInit($event, 0)" [options]="editorSqlOptions"
+                     [(ngModel)]="codes[0]"></ngx-monaco-editor>
+</div>
+<mat-tab-group [(selectedIndex)]="selectedIndex" (selectedTabChange)="generate()" id="tab_kotlin"
+               [backgroundColor]="'primary'" [color]="'primary'">
+  <mat-tab label="Pojo">
+    <ngx-monaco-editor class="editor" (init)="editorInit($event, 1)" [options]="editorKotlinOptions"
+                       [(ngModel)]="codes[1]"></ngx-monaco-editor>
+  </mat-tab>
+  <mat-tab label="Dao">
+    <ngx-monaco-editor class="editor" (init)="editorInit($event, 2)" [options]="editorKotlinOptions"
+                       [(ngModel)]="codes[2]"></ngx-monaco-editor>
+  </mat-tab>
+  <mat-tab label="Controller">
+    <ngx-monaco-editor class="editor" (init)="editorInit($event, 3)" [options]="editorKotlinOptions"
+                       [(ngModel)]="codes[3]"></ngx-monaco-editor>
+  </mat-tab>
+  <mat-tab label="Service">
+    <ngx-monaco-editor class="editor" (init)="editorInit($event, 4)" [options]="editorKotlinOptions"
+                       [(ngModel)]="codes[4]"></ngx-monaco-editor>
+  </mat-tab>
+</mat-tab-group>
