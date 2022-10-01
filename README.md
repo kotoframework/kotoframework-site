@@ -1,5 +1,8 @@
 # KotoFrameworkWebsite
 
+This is the official website for the KotoFramework.
+visit the website at [kotoframework.com](https://kotoframework.com)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.1.
 
 ## Development server
