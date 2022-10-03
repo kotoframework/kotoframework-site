@@ -1,31 +1,23 @@
 html, body {
-  width: 200vw;
-  overflow-x: hidden;
+  width: 100%;
   margin: 0;
   padding: 0;
 }
 
-.frame {
-  width: 100vw;
-  height: 100vh;
-  border: 0;
-  position: absolute;
-  left: 0;
-  top: 0;
-  transform: rotateY(180deg);
-  transition: 1.5s;
-  transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
-  transform-style: preserve-3d;
-  background: #FFF;
-}
-
 .container {
   background: linear-gradient(to right, #7f52ff 0, #7f52ff 50%, #27282c 50%, #27282c 100%);
-  width: 100vw;
+  width: 100%;
+  padding-top: 100px;
   transition: 1.5s;
   transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
-  transform-style: preserve-3d;
 }
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.button-home{
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 100;
+}
+

@@ -1,6 +1,30 @@
-.button-home{
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  z-index: 100;
+#nav-bar {
+  padding: 15px 25px;
+  background: #7f52ff;
+  position: sticky;
+  width: calc(100% - 50px);
+  z-index: 1;
+  top: 0;
+  color: #FFF;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+
+  .icon {
+    width: 30px;
+    height: 30px;
+
+  }
+
+  #logo {
+    width: 60px;
+    float: left;
+    margin-top: -12px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 8px;
+    margin-right: 24px;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.8);
+    }
+  }
 }

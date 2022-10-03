@@ -65,6 +65,14 @@ export class I18nService {
       "database": "数据库类型",
       "invalidSQL": "无效的SQL",
       "close": "关闭",
+      "askDialog": {
+        "title": "Hi, 在生成代码之前，你需要填写一些信息",
+        "yourName": "你的名字",
+        "kPojoSuffix": "KPojo后缀",
+        "ok": "确定",
+        "noThanks": "不用了，谢谢"
+      },
+      "shared": "网址已经复制到剪贴板，快去分享给你的朋友吧！",
     },
     'en-US': {
       home: "Home",
@@ -116,6 +124,14 @@ export class I18nService {
       "database": "Database type",
       "invalidSQL": "Invalid SQL",
       "close": "Close",
+      "askDialog": {
+        "title": "Hi, before generating code, you need to fill in some information",
+        "yourName": "Your name",
+        "kPojoSuffix": "KPojo suffix",
+        "ok": "OK",
+        "noThanks": "No thanks"
+      },
+      "shared": "The URL has been copied to the clipboard, go and share it with your friends!",
     }
   }
 }

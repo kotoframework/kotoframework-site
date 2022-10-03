@@ -51,12 +51,6 @@ export class StartPageComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    const uaLanguage = window.navigator.language;
-    if (uaLanguage === 'zh-CN') {
-      this.i18n.currentLanguage = 'zh-CN';
-    } else {
-      this.i18n.currentLanguage = 'en-US';
-    }
     this.next();
   }
 
