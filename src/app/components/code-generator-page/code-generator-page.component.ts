@@ -125,7 +125,7 @@ export class CodeGeneratorPageComponent implements OnInit {
     const importDefault = fields.some(item => item.defaultValue !== null);
     const lines = fields.map(item => {
       const {fieldName, fieldType, defaultValue, comment, primaryKey} = item;
-      return `    ${defaultValue === null && defaultValue !== 'NULL' ? '' : '@Default("' + removeQuotes(defaultValue) + '") '}val ${fieldName}: ${fieldType}? = null, //${comment || fieldName}`;
+      return `    ${defaultValue === null || removeQuotes(defaultValue) === 'NULL' ? '' : '@Default("' + removeQuotes(defaultValue) + '") '}val ${fieldName}: ${fieldType}? = null, //${comment || fieldName}`;
     }).join(`\n`);
     this.codes[1] = `package com.kotoframework.models
 
