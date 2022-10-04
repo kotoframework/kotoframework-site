@@ -125,7 +125,7 @@ export class CodeGeneratorPageComponent implements OnInit {
     const importDefault = fields.some(item => item.defaultValue !== null);
     const lines = fields.map(item => {
       const {fieldName, fieldType, defaultValue, comment, primaryKey} = item;
-      return `    ${defaultValue === null ? '' : '@Default("' + removeQuotes(defaultValue) + '") '}val ${fieldName}: ${fieldType}? = null, //${comment || fieldName}`;
+      return `    ${defaultValue === null && defaultValue !== 'NULL' ? '' : '@Default("' + removeQuotes(defaultValue) + '") '}val ${fieldName}: ${fieldType}? = null, //${comment || fieldName}`;
     }).join(`\n`);
     this.codes[1] = `package com.kotoframework.models
 
@@ -172,7 +172,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/${tableName.split('_').join('/')}")
 class ${controllerName}(@Autowired val ${serviceVariableName}: ${serviceName}) {
     @PostMapping("")
-    fun create${className}(@RequestBody ${classNameLower}: ${className + this.kPojoSuffix}}): Response {
+    fun create${className}(@RequestBody ${classNameLower}: ${className + this.kPojoSuffix}): Response {
         ${serviceVariableName}.create${className}(${classNameLower})
         return Response.success()
     }
@@ -184,7 +184,7 @@ class ${controllerName}(@Autowired val ${serviceVariableName}: ${serviceName}) {
     }
 
     @PutMapping("")
-    fun update${className}(@RequestBody ${classNameLower}: ${className + this.kPojoSuffix}}): Response {
+    fun update${className}(@RequestBody ${classNameLower}: ${className + this.kPojoSuffix}): Response {
         ${serviceVariableName}.update${className}(${classNameLower})
         return Response.success()
     }
