@@ -184,18 +184,18 @@ class ${controllerName}(@Autowired val ${serviceVariableName}: ${serviceName}) {
     }
 
     @PutMapping("")
-    fun remove${className}(@RequestBody ${classNameLower}: ${className + this.kPojoSuffix}}): Response {
+    fun update${className}(@RequestBody ${classNameLower}: ${className + this.kPojoSuffix}}): Response {
         ${serviceVariableName}.update${className}(${classNameLower})
         return Response.success()
     }
 
     @PostMapping("list")
-    fun list${className}(
+    fun get${className}List(
         @RequestBody ${classNameLower}: ${className + this.kPojoSuffix}},
         @RequestParam("pageIndex") pageIndex: Int,
         @RequestParam("pageSize") pageSize: Int
     ): Response {
-        val (list, total) = ${serviceVariableName}.query${className}(${classNameLower}, pageIndex, pageSize)
+        val (list, total) = ${serviceVariableName}.query${className}List(${classNameLower}, pageIndex, pageSize)
         return Response.success(list).put("total", total)
     }
 
@@ -260,7 +260,7 @@ class ${serviceName} {
         return select(${className + this.kPojoSuffix}).byId().execute()
     }
 
-    fun query${className}(${classNameLower}: ${className + this.kPojoSuffix}, pageIndex: Int, pageSize: Int): Pair<List<Map<String, Any>>, Int> {
+    fun query${className}List(${classNameLower}: ${className + this.kPojoSuffix}, pageIndex: Int, pageSize: Int): Pair<List<Map<String, Any>>, Int> {
         val list = select(${classNameLower}).where().page(pageIndex, pageSize).orderBy(${classNameLower}::updateTime.desc())
             .query() to total
     }
