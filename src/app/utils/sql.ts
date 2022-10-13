@@ -18,7 +18,6 @@ export function analysisCreateSql(sql: string): Table {
   sql = sql.trim();
   let sqlBig = sql.toUpperCase();//大写sql，用来定位，取值还是取原sql
   let tableName = removeQuotes(sql.substring(sqlBig.indexOf("TABLE") + 5, sqlBig.indexOf("(")).replace("IF NOT EXISTS ", "").trim());//表名
-  console.log(tableName)
   let comment = analysis_sql_annotation(sql.substring(sqlBig.lastIndexOf("COMMENT")));//表注释
   let fieldSql = cut_start_end_out(sql, "(", ")").split(",");
   let columns: Column[] = [];//表字段
@@ -53,7 +52,7 @@ export function analysisCreateSql(sql: string): Table {
       obj.comment = obj.name;
     }
     //字段类型
-    obj.type = sql.substring(0, sql.indexOf(" ")).trim();
+    obj.type = sql.substring(0, sql.indexOf(" ")).split("(")[0].trim();
 
     //字段是否为无符号
     obj.unsigned = upperCasedSql.includes("UNSIGNED");
