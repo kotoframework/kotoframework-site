@@ -20,8 +20,8 @@ export function analysisCreateSql(sql: string): Table {
   let tableName = removeQuotes(sql.substring(sqlBig.indexOf("TABLE") + 5, sqlBig.indexOf("(")).replace("IF NOT EXISTS ", "").trim());//表名
   let comment = analysis_sql_annotation(sql.substring(sqlBig.lastIndexOf("COMMENT")));//表注释
   let fieldSql = cut_start_end_out(sql, "(", ")").split(",");
-  const endClauseIndex = fieldSql.findIndex(sql => sql[0] !== "`")
-  fieldSql = fieldSql.filter((sql, index) => sql.includes("`") && index < endClauseIndex);
+  const endClauseIndex = fieldSql.findIndex((sql) => sql.includes('USING BTREE'));
+  fieldSql = fieldSql.filter((sql, index) => (sql.includes("`") || sql.includes('"')) && (index < endClauseIndex || endClauseIndex === -1));
   let columns: Column[] = [];//表字段
   let primaryKey = "";
   fieldSql.forEach(sql => {
