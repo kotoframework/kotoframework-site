@@ -19,7 +19,7 @@ export function analysisCreateSql(sql: string): Table {
   let sqlBig = sql.toUpperCase();//大写sql，用来定位，取值还是取原sql
   let tableName = removeQuotes(sql.substring(sqlBig.indexOf("TABLE") + 5, sqlBig.indexOf("(")).replace("IF NOT EXISTS ", "").trim());//表名
   let comment = analysis_sql_annotation(sql.substring(sqlBig.lastIndexOf("COMMENT")));//表注释
-  let fieldSql = cut_start_end_out(sql, "(", ")").split(",");
+  let fieldSql = cut_start_end_out(sql, "(", ")").split(",").filter(sql => sql.includes("`") && !sql.includes("USING BTREE"));
   let columns: Column[] = [];//表字段
   let primaryKey = "";
   fieldSql.forEach(sql => {
