@@ -129,6 +129,5 @@ export function removeQuotes(str: string) {
   return str.filter((item, index) => {
     if (index !== 0 && index !== str.length - 1) return true;
     return !(item === "`" || item === "'" || item === '"');
-
   })
 }
