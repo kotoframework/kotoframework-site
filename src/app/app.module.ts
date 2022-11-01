@@ -19,6 +19,7 @@ import { AppRoutingModule } from './app-routing.module';
 import {RouterOutlet} from "@angular/router";
 import {MatMenuModule} from "@angular/material/menu";
 import {CommonModule} from "@angular/common";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import {CommonModule} from "@angular/common";
     MatInputModule,
     AppRoutingModule,
     RouterOutlet,
-    MatMenuModule
+    MatMenuModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

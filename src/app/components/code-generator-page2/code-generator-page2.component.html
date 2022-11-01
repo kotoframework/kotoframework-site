@@ -23,8 +23,18 @@
       <mat-icon>settings</mat-icon>
     </button>
   </mat-toolbar>
-  <ngx-monaco-editor class="editor" (init)="editorInit($event, 0)" [options]="editorSqlOptions"
-                     [(ngModel)]="codes[0]"></ngx-monaco-editor>
+  <div class="editor">
+    <mat-selection-list *ngIf="current === 'database'">
+      <mat-list-option *ngFor="let item of list.database" (click)="onDatabaseClick(item)">
+        {{ item }}
+      </mat-list-option>
+    </mat-selection-list>
+    <mat-selection-list #selectionList *ngIf="current === 'table'">
+      <mat-list-option *ngFor="let item of list.table" (click)="onTableClick(selectionList, item)">
+        {{ item }}
+      </mat-list-option>
+    </mat-selection-list>
+  </div>
 </div>
 <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedTabChange)="generate()" id="tab_kotlin"
                [backgroundColor]="'primary'" [color]="'primary'">
@@ -49,7 +59,13 @@
 </div>
 
 <div class="button-codegen2">
-  <a routerLink="/code-generator2" mat-fab color="primary" aria-label="keyboard icon">
+  <a routerLink="/code-generator" mat-fab color="primary" aria-label="keyboard icon">
     <mat-icon>keyboard</mat-icon>
+  </a>
+</div>
+
+<div class="button-reload">
+  <a (click)="ngOnInit()" mat-fab color="primary" aria-label="reload icon">
+    <mat-icon>refresh</mat-icon>
   </a>
 </div>

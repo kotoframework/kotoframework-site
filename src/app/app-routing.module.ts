@@ -6,6 +6,8 @@ import {CodeGeneratorPageModule} from "./components/code-generator-page/code-gen
 import {DownloadPageModule} from "./components/download-page/download-page.module";
 import {CodeGeneratorPageComponent} from "./components/code-generator-page/code-generator-page.component";
 import {DownloadPageComponent} from "./components/download-page/download-page.component";
+import {CodeGeneratorPage2Component} from "./components/code-generator-page2/code-generator-page2.component";
+import {CodeGeneratorPage2Module} from "./components/code-generator-page2/code-generator-page2.module";
 
 const routes: Routes = [
   {
@@ -15,6 +17,10 @@ const routes: Routes = [
   {
     path: 'code-generator',
     component: CodeGeneratorPageComponent
+  },
+  {
+    path: 'code-generator2',
+    component: CodeGeneratorPage2Component
   },
   {
     path: 'download',
@@ -28,6 +34,7 @@ const routes: Routes = [
     CommonModule,
     RouterModule.forRoot(routes, { useHash: true }),
     CodeGeneratorPageModule,
+    CodeGeneratorPage2Module,
     DownloadPageModule,
   ],
   exports: [

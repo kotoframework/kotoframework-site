@@ -6,6 +6,11 @@ import {Else, In, Is, when} from "when-case";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {StartPageService} from "../start-page/start-page.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {HttpClient} from "@angular/common/http";
+import {lastValueFrom} from "rxjs";
+import {FlatTreeControl} from "@angular/cdk/tree";
+import {Router} from "@angular/router";
+import {MatSelectionList, MatSelectionListChange} from "@angular/material/list";
 
 export interface DialogData {
   yourName: string;
@@ -14,11 +19,11 @@ export interface DialogData {
 
 
 @Component({
-  selector: 'app-code-generator-page',
-  templateUrl: './code-generator-page.component.html',
-  styleUrls: ['./code-generator-page.component.less']
+  selector: 'app-code-generator-page2',
+  templateUrl: './code-generator-page2.component.html',
+  styleUrls: ['./code-generator-page2.component.less']
 })
-export class CodeGeneratorPageComponent implements OnInit {
+export class CodeGeneratorPage2Component implements OnInit {
   yourName: string = '';
   kPojoSuffix: string = '';
   public database = 'MySQL';
@@ -30,15 +35,66 @@ export class CodeGeneratorPageComponent implements OnInit {
     'SQLite',
   ];
 
-  constructor(public i18n: I18nService, private _snackBar: MatSnackBar, public startPageSrv: StartPageService, public dialog: MatDialog) {
+  constructor(public i18n: I18nService, private _snackBar: MatSnackBar, public startPageSrv: StartPageService, public http: HttpClient, public dialog: MatDialog, private router: Router) {
+    this.router.routeReuseStrategy.shouldReuseRoute = function () {
+      return false;
+    };
   }
 
-  ngOnInit(): void {
+  dataSource: any[] = [];
+
+  list: {
+    database: string[],
+    table: string[],
+    column: any[],
+  } = {
+    database: [],
+    table: [],
+    column: [],
+  }
+
+  selectedDatabase: string | null = null;
+  selectedTable: string | null = null;
+  current: "database" | "table" = "database";
+  tableInfo: Table | null = null
+
+  async onDatabaseClick(database: string) {
+    this.selectedDatabase = database;
+    this.list.table = await lastValueFrom(this.http.get("http://localhost:8096/tables?database=" + database)) as string[];
+    this.current = 'table';
+  }
+
+  async onTableClick(list: MatSelectionList, table: string) {
+    this.selectedTable = table;
+    list.deselectAll();
+    this.list.column = await lastValueFrom(this.http.get("http://localhost:8096/columns?database=" + this.selectedDatabase + "&table=" + this.selectedTable)) as any[];
+    this.tableInfo = {
+      tableName: this.selectedTable,
+      comment: null,
+      columns: this.list.column.map(column => {
+        return {
+          name: column.Field,
+          comment: column.Comment,
+          type: column.Type,
+          defaultValue: column.Default || "NULL",
+          unsigned: column.Type.includes("unsigned"),
+          primaryKey: column.key === "PRI",
+        }
+      }),
+    }
+    this.generate();
+  }
+
+  async ngOnInit(): Promise<void> {
+    this.current = 'database';
     this.yourName = window.localStorage.getItem('yourName') || '';
     this.kPojoSuffix = window.localStorage.getItem('kPojoSuffix') || '';
-    this.generate();
     if (this.yourName === '' || this.kPojoSuffix === '') {
       this.openDialog();
+    }
+    const {status} = await lastValueFrom(this.http.get("http://localhost:8096/validate")) as { status: string };
+    if (status === 'ready') {
+      this.list.database = await lastValueFrom(this.http.get("http://localhost:8096/databases")) as string[];
     }
   }
 
@@ -49,12 +105,12 @@ export class CodeGeneratorPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-     if(result){
-       this.yourName = result.yourName;
-       this.kPojoSuffix = result.kPojoSuffix;
-       window.localStorage.setItem('yourName', this.yourName);
-       window.localStorage.setItem('kPojoSuffix', this.kPojoSuffix);
-     }
+      if (result) {
+        this.yourName = result.yourName;
+        this.kPojoSuffix = result.kPojoSuffix;
+        window.localStorage.setItem('yourName', this.yourName);
+        window.localStorage.setItem('kPojoSuffix', this.kPojoSuffix);
+      }
       this.generate();
     });
   }
@@ -62,22 +118,17 @@ export class CodeGeneratorPageComponent implements OnInit {
   selectedIndex = 0;
 
   generate() {
-    const sql = this.codes[0];
-    if (!validateSql(sql)) {
-      this._snackBar.open(this.i18n.get('invalidSQL'), this.i18n.get('close'), {
-        duration: 2000,
-      });
+    if (this.tableInfo === null) {
       return;
     }
-    const tableInfo = analysisCreateSql(sql);
     if (this.selectedIndex === 0) {
-      this.generateKotlinDataClass(tableInfo);
+      this.generateKotlinDataClass(this.tableInfo);
     }
     if (this.selectedIndex === 1) {
-      this.generateController(tableInfo);
+      this.generateController(this.tableInfo);
     }
     if (this.selectedIndex === 2) {
-      this.generateService(tableInfo);
+      this.generateService(this.tableInfo);
     }
   }
 
@@ -207,9 +258,9 @@ class ${controllerName}(@Autowired val ${serviceVariableName}: ${serviceName}) {
     }
 
 ${fields.filter(item => item.fieldType === "String").map(item => {
-  const fieldCapitalized = item.fieldName.replace(/^\w/, s => s.toUpperCase());
-  return "    @GetMapping(\"" + item.fieldName + "/list\")\n" + "    fun get" + fieldCapitalized + "List(@RequestParam " + item.fieldName + ": String? = null): Response {\n" + "        return " + serviceVariableName + ".get" + fieldCapitalized + "List" + "(" + item.fieldName + ").put(\"" + item.fieldName + "\" to " + item.fieldName + ")\n" + "    }\n";
-}).join(`\n`)}
+      const fieldCapitalized = item.fieldName.replace(/^\w/, s => s.toUpperCase());
+      return "    @GetMapping(\"" + item.fieldName + "/list\")\n" + "    fun get" + fieldCapitalized + "List(@RequestParam " + item.fieldName + ": String? = null): Response {\n" + "        return " + serviceVariableName + ".get" + fieldCapitalized + "List" + "(" + item.fieldName + ").put(\"" + item.fieldName + "\" to " + item.fieldName + ")\n" + "    }\n";
+    }).join(`\n`)}
 
 }
 `;
@@ -266,10 +317,10 @@ class ${serviceName} {
     }
 
 ${fields.filter(item => item.fieldType === "String").map(item => {
-  const fieldCapitalized = item.fieldName.replace(/^\w/, s => s.toUpperCase());
-  return "    fun get" + fieldCapitalized + "List(" + item.fieldName + ": String? = null): List<String> {\n" + "        return optionList(" + className + this.kPojoSuffix + "::" + item.fieldName + " to " + item.fieldName + ").queryForList()\n" + "    }\n";
-}
-).join(`\n`)}
+        const fieldCapitalized = item.fieldName.replace(/^\w/, s => s.toUpperCase());
+        return "    fun get" + fieldCapitalized + "List(" + item.fieldName + ": String? = null): List<String> {\n" + "        return optionList(" + className + this.kPojoSuffix + "::" + item.fieldName + " to " + item.fieldName + ").queryForList()\n" + "    }\n";
+      }
+    ).join(`\n`)}
 }
 `;
   }

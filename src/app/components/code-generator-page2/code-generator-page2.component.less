@@ -1,0 +1,50 @@
+.left {
+  width: 50%;
+  height: calc(100% - 66px);
+  float: left;
+  display: inline-block;
+  position: relative;
+}
+
+#tab_kotlin {
+  width: 50%;
+  height: calc(100% - 66px);
+  float: left;
+  display: inline-block;
+  position: relative;
+}
+
+.editor {
+  width: 100%;
+  height: calc(100vh - 130px);
+  float: left;
+  display: inline-block;
+  position: relative;
+  overflow-y: auto;
+  background: #424242;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/deep/ .mat-tab-label-container, /deep/ .mat-tab-labels, /deep/ div[role=tab] {
+  height: 64px;
+}
+
+#logo {
+  width: 60px;
+  float: left;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 8px;
+  margin-right: 24px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+}
+
+:host {
+  background: #000;
+}
