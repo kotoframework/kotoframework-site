@@ -15,6 +15,10 @@ import {MatSelectionList, MatSelectionListChange} from "@angular/material/list";
 export interface DialogData {
   yourName: string;
   kPojoSuffix: string;
+  database: string;
+  username: string;
+  password: string;
+  url: string;
 }
 
 
@@ -26,6 +30,11 @@ export interface DialogData {
 export class CodeGeneratorPage2Component implements OnInit {
   yourName: string = '';
   kPojoSuffix: string = '';
+  db: string = '';
+  username: string = '';
+  password: string = '';
+  url: string = '';
+
   public database = 'MySQL';
   public databases = [
     'MySQL',
@@ -89,7 +98,11 @@ export class CodeGeneratorPage2Component implements OnInit {
     this.current = 'database';
     this.yourName = window.localStorage.getItem('yourName') || '';
     this.kPojoSuffix = window.localStorage.getItem('kPojoSuffix') || '';
-    if (this.yourName === '' || this.kPojoSuffix === '') {
+    this.db = window.localStorage.getItem('db') || '';
+    this.username = window.localStorage.getItem('username') || '';
+    this.password = window.localStorage.getItem('password') || '';
+    this.url = window.localStorage.getItem('url') || 'jdbc:mysql://localhost:3306/#database#?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true';
+    if (this.yourName === '' || this.kPojoSuffix === '' || this.db === '' || this.username === '' || this.password === '' || this.url === '') {
       this.openDialog();
     }
     const {status} = await lastValueFrom(this.http.get("http://localhost:8096/validate")) as { status: string };
@@ -101,17 +114,39 @@ export class CodeGeneratorPage2Component implements OnInit {
   openDialog() {
     const dialogRef = this.dialog.open(AskDialog, {
       width: '450px',
-      data: {yourName: this.yourName, kPojoSuffix: this.kPojoSuffix},
+      data: {
+        yourName: this.yourName,
+        kPojoSuffix: this.kPojoSuffix,
+        database: this.db,
+        username: this.username,
+        password: this.password,
+        url: this.url
+      },
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.yourName = result.yourName;
         this.kPojoSuffix = result.kPojoSuffix;
+        this.db = result.database;
+        this.username = result.username;
+        this.password = result.password;
+        this.url = result.url;
         window.localStorage.setItem('yourName', this.yourName);
         window.localStorage.setItem('kPojoSuffix', this.kPojoSuffix);
+        window.localStorage.setItem('db', this.db);
+        window.localStorage.setItem('username', this.username);
+        window.localStorage.setItem('password', this.password);
+        this.http.post("http://localhost:8096/config", result).subscribe(res => {
+          this._snackBar.open(this.i18n.get("askDialog")["configSuccess"], this.i18n.get('close'), {
+            duration: 2000,
+          }).afterDismissed().subscribe(() => {
+            this.ngOnInit().then(r => {
+              this.generate();
+            });
+          });
+        });
       }
-      this.generate();
     });
   }
 
@@ -420,6 +455,22 @@ ${fields.filter(item => item.fieldType === "String").map(item => {
       <mat-form-field appearance="fill" style="width: 400px">
         <mat-label>{{i18n.get("askDialog")["kPojoSuffix"]}}</mat-label>
         <input matInput [(ngModel)]="data.kPojoSuffix">
+      </mat-form-field>
+      <mat-form-field appearance="fill" style="width: 400px">
+        <mat-label>{{i18n.get("askDialog")["url"]}}</mat-label>
+        <input matInput [(ngModel)]="data.url">
+      </mat-form-field>
+      <mat-form-field appearance="fill" style="width: 400px">
+        <mat-label>{{i18n.get("askDialog")["username"]}}</mat-label>
+        <input matInput [(ngModel)]="data.username">
+      </mat-form-field>
+      <mat-form-field appearance="fill" style="width: 400px">
+        <mat-label>{{i18n.get("askDialog")["password"]}}</mat-label>
+        <input matInput [(ngModel)]="data.password">
+      </mat-form-field>
+      <mat-form-field appearance="fill" style="width: 400px">
+        <mat-label>{{i18n.get("askDialog")["database"]}}</mat-label>
+        <input matInput [(ngModel)]="data.database">
       </mat-form-field>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
