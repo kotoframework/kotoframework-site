@@ -94,6 +94,18 @@ export class CodeGeneratorPage2Component implements OnInit {
     this.generate();
   }
 
+  async getDataBase() {
+    const {status} = await lastValueFrom(this.http.get("http://localhost:8096/validate")) as { status: string };
+    if (status === 'ready') {
+      this.list.database = await lastValueFrom(this.http.get("http://localhost:8096/databases")) as string[];
+      this.current = 'database';
+    } else {
+      this._snackBar.open(this.i18n.get("networkError"), this.i18n.get('close'), {
+        duration: 2000,
+      })
+    }
+  }
+
   async ngOnInit(): Promise<void> {
     this.current = 'database';
     this.yourName = window.localStorage.getItem('yourName') || '';
@@ -102,12 +114,22 @@ export class CodeGeneratorPage2Component implements OnInit {
     this.username = window.localStorage.getItem('username') || '';
     this.password = window.localStorage.getItem('password') || '';
     this.url = window.localStorage.getItem('url') || 'jdbc:mysql://localhost:3306/#database#?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true';
+
+
     if (this.yourName === '' || this.kPojoSuffix === '' || this.db === '' || this.username === '' || this.password === '' || this.url === '') {
       this.openDialog();
-    }
-    const {status} = await lastValueFrom(this.http.get("http://localhost:8096/validate")) as { status: string };
-    if (status === 'ready') {
-      this.list.database = await lastValueFrom(this.http.get("http://localhost:8096/databases")) as string[];
+    } else {
+      this.http.post("http://localhost:8096/config", {
+        database: this.db,
+        username: this.username,
+        password: this.password,
+        url: this.url
+      }).subscribe(res => {
+        this.getDataBase();
+        this._snackBar.open(this.i18n.get("askDialog")["configSuccess"], this.i18n.get('close'), {
+          duration: 2000,
+        });
+      });
     }
   }
 
@@ -141,9 +163,7 @@ export class CodeGeneratorPage2Component implements OnInit {
           this._snackBar.open(this.i18n.get("askDialog")["configSuccess"], this.i18n.get('close'), {
             duration: 2000,
           }).afterDismissed().subscribe(() => {
-            this.ngOnInit().then(r => {
-              this.generate();
-            });
+            this.getDataBase();
           });
         });
       }

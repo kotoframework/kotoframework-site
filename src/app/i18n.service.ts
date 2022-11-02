@@ -78,6 +78,7 @@ export class I18nService {
         "configSuccess": "配置成功",
       },
       "shared": "网址已经复制到剪贴板，快去分享给你的朋友吧！",
+      "networkError": "网络连接错误！"
     },
     'en-US': {
       home: "Home",
@@ -142,6 +143,7 @@ export class I18nService {
         "configSuccess": "Config success",
       },
       "shared": "The URL has been copied to the clipboard, go and share it with your friends!",
+      "networkError": "Network error!"
     }
   }
 }
