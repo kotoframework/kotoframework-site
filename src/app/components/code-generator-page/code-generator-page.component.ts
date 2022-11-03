@@ -208,7 +208,7 @@ class ${controllerName}(@Autowired val ${serviceVariableName}: ${serviceName}) {
 
 ${fields.filter(item => item.fieldType === "String").map(item => {
   const fieldCapitalized = item.fieldName.replace(/^\w/, s => s.toUpperCase());
-  return "    @GetMapping(\"" + item.fieldName + "/list\")\n" + "    fun get" + fieldCapitalized + "List(@RequestParam " + item.fieldName + ": String? = null): Response {\n" + "        return Response.success(" + serviceVariableName + ".get" + fieldCapitalized + "List" + "(" + item.fieldName + ").put(\"" + item.fieldName + "\" to " + item.fieldName + "))\n" + "    }\n";
+  return "    @GetMapping(\"" + item.fieldName + "/list\")\n" + "    fun get" + fieldCapitalized + "List(@RequestParam " + item.fieldName + ": String? = null): Response {\n" + "        return Response.success(" + serviceVariableName + ".get" + fieldCapitalized + "List" + "(" + item.fieldName + ")).put(\"" + item.fieldName + "\" to " + item.fieldName + ")\n" + "    }\n";
 }).join(`\n`)}
 
 }
