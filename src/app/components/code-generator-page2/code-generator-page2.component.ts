@@ -368,7 +368,7 @@ class ${serviceName} {
     }
 
     fun query${className}List(${classNameLower}: ${className + this.kPojoSuffix}, pageIndex: Int, pageSize: Int): Pair<List<Map<String, Any>>, Int> {
-        return select(${classNameLower}).where().page(pageIndex, pageSize).orderBy(${classNameLower}::updateTime.desc()).query() to total
+        return select(${classNameLower}).where().page(pageIndex, pageSize).orderBy(${classNameLower}::updateTime.desc()).withTotal{ it.query() }
     }
 
 ${fields.filter(item => item.fieldType === "String").map(item => {
