@@ -159,6 +159,7 @@ ${lines}
     const fields = columns.filter(item => !['deleted', 'create_time', 'update_time'].includes(item.name)).map(column => this.getKotlinField(column));
     this.codes[2] = `package com.kotoframework.controllers
 
+import com.leinbo.eqm.dto.Response
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
@@ -179,7 +180,7 @@ class ${controllerName}(@Autowired val ${serviceVariableName}: ${serviceName}) {
     }
 
     @DeleteMapping("{id}")
-    fun remove${className}(@PathVariable id: Int): Response {
+    fun remove${className}(@PathVariable id: ${fields.find(field => field.fieldName === 'id')?.fieldType || 'Int'}): Response {
         ${serviceVariableName}.remove${className}(id)
         return Response.success()
     }
@@ -201,7 +202,7 @@ class ${controllerName}(@Autowired val ${serviceVariableName}: ${serviceName}) {
     }
 
     @GetMapping("{id}")
-    fun get${className}(@PathVariable id: Int): Response {
+    fun get${className}(@PathVariable id: ${fields.find(field => field.fieldName === 'id')?.fieldType || 'Int'}): Response {
         val ${classNameLower} = ${serviceVariableName}.get${className}(id)
         return Response.success(${classNameLower})
     }
@@ -229,9 +230,11 @@ ${fields.filter(item => item.fieldType === "String").map(item => {
 
 import org.springframework.stereotype.Service
 import com.kotoframework.definition.desc
-import com.kotoframework.function.create.batchExecute
+import com.kotoframework.function.columnSearch.columnSearch
+import com.kotoframework.beans.KotoExecuteResult
+import com.kotoframework.function.create.Patch.execute
+import com.leinbo.eqm.dto.thirdPhase.WeldingProcessGeneralDto
 import com.kotoframework.function.create.create
-import com.kotoframework.function.optionList.optionList
 import com.kotoframework.function.remove.remove
 import com.kotoframework.function.select.select
 import com.kotoframework.function.update.update
@@ -249,7 +252,7 @@ class ${serviceName} {
         return create(${classNameLower}).onId().execute()
     }
 
-    fun remove${className}(id: Int): KotoExecuteResult {
+    fun remove${className}(id: ${fields.find(field => field.fieldName === 'id')?.fieldType || 'Int'}): KotoExecuteResult {
         return remove(${className + this.kPojoSuffix}(id)).soft().byId().execute()
     }
 
@@ -257,17 +260,17 @@ class ${serviceName} {
         return update(${classNameLower}).byId().execute()
     }
 
-    fun get${className}(id: Int): ${className + this.kPojoSuffix} {
+    fun get${className}(id: ${fields.find(field => field.fieldName === 'id')?.fieldType || 'Int'}): ${className + this.kPojoSuffix} {
         return select(${className + this.kPojoSuffix}(id)).by("id").queryForObject()
     }
 
     fun query${className}List(${classNameLower}: ${className + this.kPojoSuffix}, pageIndex: Int, pageSize: Int): Pair<List<Map<String, Any>>, Int> {
-        return select(${classNameLower}).where().page(pageIndex, pageSize).orderBy(${classNameLower}::updateTime.desc()).query() to total
+        return select(${classNameLower}).where().page(pageIndex, pageSize).orderBy(${classNameLower}::updateTime.desc()).withTotal{ it.query() }
     }
 
 ${fields.filter(item => item.fieldType === "String").map(item => {
   const fieldCapitalized = item.fieldName.replace(/^\w/, s => s.toUpperCase());
-  return "    fun get" + fieldCapitalized + "List(" + item.fieldName + ": String? = null): List<String> {\n" + "        return optionList(" + className + this.kPojoSuffix + "::" + item.fieldName + " to " + item.fieldName + ").queryForList()\n" + "    }\n";
+  return "    fun get" + fieldCapitalized + "List(" + item.fieldName + ": String? = null): List<String> {\n" + "        return columnSearch(" + className + this.kPojoSuffix + "::" + item.fieldName + " to " + item.fieldName + ").queryForList()\n" + "    }\n";
 }
 ).join(`\n`)}
 }
