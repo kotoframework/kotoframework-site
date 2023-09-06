@@ -84,7 +84,7 @@ export class CodeGeneratorPage2Component implements OnInit {
         return {
           name: column.Field,
           comment: column.Comment,
-          type: column.Type,
+          type: column.Type.replace(" unsigned", ""),
           defaultValue: column.Default || "NULL",
           unsigned: column.Type.includes("unsigned"),
           primaryKey: column.key === "PRI",
